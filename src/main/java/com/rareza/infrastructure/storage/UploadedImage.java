@@ -12,7 +12,7 @@ public class UploadedImage extends AuditableEntity {
 
     @Column(name = "image_url", length = 1000, nullable = false)
     private String imageUrl; 
-    // Must be CDN URL or signed URL (never raw S3 path)
+    // Must be CDN URL or signed URL (never raw S3 path)a
 
     @Column(name = "file_size_bytes", nullable = false)
     private long fileSizeBytes;

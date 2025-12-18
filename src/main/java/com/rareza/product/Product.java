@@ -1,6 +1,7 @@
 package com.rareza.product;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import com.rareza.audit.AuditableEntity;
 import com.rareza.common.enums.ProductType;
@@ -9,17 +10,24 @@ import com.rareza.common.enums.ProductType;
 @Table(name = "products")
 public class Product extends AuditableEntity {
 
+    @NotBlank(message = "Product name is required")
+    @Size(max = 100, message = "Product name cannot exceed 100 characters")
     @Column(length = 100, nullable = false, unique = true)
     private String name;
 
+    @Size(max = 2000, message = "Description cannot exceed 2000 characters")
     @Lob
     @Column
     private String description;
 
+    @NotNull(message = "Product type is required")
     @Enumerated(EnumType.STRING)
     @Column(name = "product_type", nullable = false)
     private ProductType productType;
 
+    @NotNull(message = "Base price is required")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Base price must be greater than 0")
+    @Digits(integer = 8, fraction = 2, message = "Base price format is invalid")
     @Column(name = "base_price", precision = 10, scale = 2, nullable = false)
     private BigDecimal basePrice;
 

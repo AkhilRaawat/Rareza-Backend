@@ -8,6 +8,7 @@ import com.rareza.design.Design;
 import com.rareza.infrastructure.storage.UploadedImage;
 import com.rareza.product.Product;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import com.rareza.audit.AuditableEntity;
 
@@ -17,8 +18,9 @@ import com.rareza.audit.AuditableEntity;
     @Index(name = "idx_order_created_at", columnList = "created_at")
 })
 public class Order extends AuditableEntity {
+    // @NotNull(message = "Product is required")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "product_id", nullable = true)
     private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,18 +31,24 @@ public class Order extends AuditableEntity {
     @JoinColumn(name = "uploaded_image_id")
     private UploadedImage uploadedImage;
 
+    @NotNull(message = "Size is required")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TShirtSize size;
 
+    @NotNull(message = "Design type is required")
     @Enumerated(EnumType.STRING)
     @Column(name = "design_type", nullable = false)
     private DesignType designType;
 
+    @NotNull(message = "Order status is required")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus status;
 
+    @NotNull(message = "Price is required")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0")
+    @Digits(integer = 8, fraction = 2, message = "Price format is invalid")
     @Column(precision = 10, scale = 2, nullable = false)
     private BigDecimal price;
 
@@ -49,12 +57,19 @@ public class Order extends AuditableEntity {
     private String rejectionReason;
 
     // Customer Information
+    @NotBlank(message = "Customer name is required")
+    @Size(max = 100, message = "Customer name cannot exceed 100 characters")
     @Column(name = "customer_name", length = 100, nullable = false)
     private String customerName;
 
+    @NotBlank(message = "Customer email is required")
+    @Email(message = "Invalid email format")
+    @Size(max = 150, message = "Email cannot exceed 150 characters")
     @Column(name = "customer_email", length = 150, nullable = false)
     private String customerEmail;
 
+    @NotBlank(message = "Customer phone is required")
+    @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Invalid phone number format")
     @Column(name = "customer_phone", length = 20, nullable = false)
     private String customerPhone;
 
